@@ -90,5 +90,5 @@ resource "aws_lambda_permission" "api_gateway" {
 
 # Output the API URL
 output "api_url" {
-  value = aws_apigatewayv2_stage.lambda_stage.invoke_url
+  value = "${aws_apigatewayv2_stage.lambda_stage.invoke_url}/"
 }
