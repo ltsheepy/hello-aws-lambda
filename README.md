@@ -340,24 +340,73 @@ aws logs tail /aws/ssm/maintenance-windows/cis-hardened/production --follow
 aws s3 ls s3://cis-hardened-ssm-logs-<account-id>/maintenance-windows/
 ```
 
-## Generate Architecture Diagram
+## 🚀 Automated Documentation
 
-The diagram is automatically generated from your Terraform state:
+All documentation is automatically generated from your live infrastructure:
+
+### Setup (One-time)
 
 ```bash
 # Install dependencies
 pip3 install diagrams graphviz
 brew install graphviz
-
-# Generate diagram from current Terraform state
-python3 generate_diagram_dynamic.py
 ```
 
-This creates:
-- `architecture.png` - Visual diagram
-- `architecture-metadata.json` - Resource inventory (version controlled)
+### Generate Reports
 
-The diagram updates automatically based on your actual deployed infrastructure!
+```bash
+# Generate all documentation (recommended)
+make readme
+
+# This creates/updates:
+# - README.md (with current costs and resources)
+# - SECURITY.md (with compliance status)
+# - architecture.png (visual diagram)
+# - architecture-metadata.json (resource inventory)
+
+# Or generate individually
+make diagram          # Architecture diagram + cost breakdown
+make security-report  # Security & compliance report
+```
+
+### What Gets Generated
+
+1. **README.md** - Auto-updated with:
+   - Current architecture diagram
+   - Live resource inventory
+   - Real-time cost breakdown by resource
+   - Timestamp of last update
+
+2. **SECURITY.md** - Auto-generated with:
+   - Patch compliance status
+   - Security Hub findings
+   - Compliance framework mappings (WAF, CIS v8, NIST 800-53)
+   - Remediation guidance
+
+3. **architecture.png** - Visual diagram from Terraform state
+
+4. **architecture-metadata.json** - Machine-readable resource inventory
+
+### Keeping Documentation Current
+
+After any infrastructure change:
+
+```bash
+terraform apply
+make readme           # Generate all documentation
+git add .
+git commit -m "Update infrastructure and documentation"
+git push
+```
+
+**One command updates everything:**
+- ✅ Architecture diagram
+- ✅ Cost breakdown
+- ✅ Security report
+- ✅ Compliance mappings
+- ✅ Resource inventory
+
+Your documentation is always in sync with your infrastructure! 🎯
 
 ## Security Features
 
@@ -377,18 +426,97 @@ The diagram updates automatically based on your actual deployed infrastructure!
 terraform destroy
 ```
 
-## Documentation
+## 📚 Documentation & Reports
 
-- [Cost Estimate](COST-ESTIMATE.md) - Detailed cost breakdown
-- [Patching Guide](README-PATCHING.md) - SSM maintenance windows guide
-- [EC2 Guide](README-EC2.md) - EC2 instance details
+### Live Reports (Auto-Generated)
 
-## Support
+These reports are automatically generated from your live AWS infrastructure:
 
-For issues or questions, check:
-- [AWS Systems Manager Docs](https://docs.aws.amazon.com/systems-manager/)
+| Report | Description | Update Command |
+|--------|-------------|----------------|
+| 📊 [Architecture Diagram](architecture.png) | Visual infrastructure diagram | `make readme` |
+| 🔒 [Security & Compliance](SECURITY.md) | Patch status, Security Hub findings, framework mappings | `make readme` |
+| 📈 [Architecture Metadata](architecture-metadata.json) | Resource inventory (JSON) | `make readme` |
+| 📝 [README.md](README.md) | This file - auto-updated with costs and resources | `make readme` |
+
+### Static Documentation
+
+| Guide | Description |
+|-------|-------------|
+| 💰 [Cost Estimate](COST-ESTIMATE.md) | Detailed cost breakdown and optimization options |
+| 🔧 [Patching Guide](README-PATCHING.md) | SSM maintenance windows and patch management |
+
+### Quick Commands
+
+```bash
+# Generate all documentation
+make readme                 # Generate all reports and update README
+
+# Deploy and document
+make all                    # Deploy infrastructure and generate all reports
+
+# Individual reports
+make diagram                # Update architecture diagram and README
+make security-report        # Update security and compliance report
+
+# View reports
+cat SECURITY.md                        # Security status
+cat architecture-metadata.json | jq   # Resource inventory (formatted)
+open architecture.png                  # View diagram
+```
+
+### Report Contents
+
+#### 🔒 Security & Compliance Report
+- ✅ Real-time patch compliance status
+- ✅ Security Hub findings by severity
+- ✅ AWS Well-Architected Framework mapping
+- ✅ CIS Controls v8 mapping
+- ✅ NIST 800-53 Rev 5 mapping
+- ✅ Compliance gaps and recommendations
+- ✅ Quick remediation commands
+
+#### 📊 Architecture Diagram
+- ✅ Auto-generated from Terraform state
+- ✅ Shows all deployed resources
+- ✅ VPC layout and networking
+- ✅ Security controls visualization
+
+#### 📈 Architecture Metadata
+- ✅ Resource counts and types
+- ✅ Instance details and patch groups
+- ✅ VPC endpoints and networking
+- ✅ Timestamp and workspace info
+
+## 🔗 Related Resources
+
+### AWS Documentation
+- [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/)
+- [AWS Security Hub](https://docs.aws.amazon.com/securityhub/)
+- [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
+
+### Compliance Frameworks
+- [CIS AWS Foundations Benchmark](https://www.cisecurity.org/benchmark/amazon_web_services)
+- [CIS Controls v8](https://www.cisecurity.org/controls/v8)
+- [NIST 800-53 Rev 5](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final)
+
+### Terraform
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- [Terraform VPC Module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest)
+
+## 📊 Project Status
+
+| Metric | Status |
+|--------|--------|
+| Infrastructure | ✅ Deployed |
+| Security | 🔒 Hardened |
+| Compliance | 📋 Mapped to WAF, CIS v8, NIST 800-53 |
+| Documentation | 📚 Auto-generated |
+| Cost | 💰 ~$36/month (optimized) |
+| Automation | 🤖 Fully automated |
 
 ---
 
-**Built with Terraform | Managed by AWS Systems Manager | Optimized for Cost**
+**Built with Terraform | Managed by AWS Systems Manager | Optimized for Cost & Security**
+
+*Infrastructure as Code | Security as Code | Documentation as Code*
