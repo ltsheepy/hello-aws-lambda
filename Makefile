@@ -36,4 +36,7 @@ clean: ## Clean generated files
 	rm -f architecture.png
 	rm -f *.zip
 
-all: init apply diagram ## Initialize, apply, and generate diagram
+security-report: ## Generate security and compliance report
+	python3 generate_security_report.py
+
+all: init apply diagram security-report ## Initialize, apply, generate diagram and security report
