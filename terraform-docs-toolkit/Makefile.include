@@ -1,0 +1,51 @@
+# Terraform Documentation Toolkit - Makefile Include
+# Include this in your project's Makefile: include .terraform-docs/Makefile.include
+
+DOCS_DIR := .terraform-docs
+DOCS_BIN := $(DOCS_DIR)/bin
+
+.PHONY: docs docs-diagram docs-security docs-costs docs-clean docs-help
+
+docs-help: ## Show documentation toolkit help
+	@echo "Terraform Documentation Toolkit"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  docs              - Generate all documentation"
+	@echo "  docs-diagram      - Generate architecture diagram"
+	@echo "  docs-security     - Generate security report"
+	@echo "  docs-costs        - Update cost breakdown"
+	@echo "  docs-clean        - Clean generated files"
+	@echo ""
+
+docs-diagram: ## Generate architecture diagram
+	@echo "📊 Generating architecture diagram..."
+	@python3 $(DOCS_BIN)/generate_diagram.py
+	@echo "✅ Diagram generated: architecture.png"
+
+docs-security: ## Generate security and compliance report
+	@echo "🔒 Generating security report..."
+	@python3 $(DOCS_BIN)/generate_security.py
+	@echo "✅ Security report: SECURITY.md"
+
+docs-costs: ## Update cost breakdown in README
+	@echo "💰 Calculating costs..."
+	@python3 $(DOCS_BIN)/generate_costs.py
+	@python3 $(DOCS_BIN)/update_readme.py
+	@echo "✅ README updated with costs"
+
+docs: docs-diagram docs-security docs-costs ## Generate all documentation
+	@echo ""
+	@echo "✅ All documentation generated:"
+	@echo "   - README.md (updated)"
+	@echo "   - SECURITY.md"
+	@echo "   - architecture.png"
+	@echo "   - architecture-metadata.json"
+	@echo ""
+	@test -f architecture-metadata.json && python3 -c "import json; d=json.load(open('architecture-metadata.json')); print(f\"📋 Resources: {d['resources']['instances']} instances, {d['resources']['vpc_endpoints']} endpoints\")" || true
+	@echo ""
+	@echo "💡 Next: git add . && git commit -m 'Update docs' && git push"
+
+docs-clean: ## Clean generated documentation files
+	@echo "🧹 Cleaning generated files..."
+	@rm -f architecture.png architecture-metadata.json
+	@echo "✅ Cleaned"
