@@ -64,7 +64,7 @@ resource "aws_ssm_maintenance_window_task" "patch_tasks" {
 
       output_s3_bucket     = aws_s3_bucket.ssm_logs.id
       output_s3_key_prefix = "maintenance-windows/${each.key}/"
-      
+
       cloudwatch_config {
         cloudwatch_log_group_name = aws_cloudwatch_log_group.ssm_maintenance[each.key].name
         cloudwatch_output_enabled = true
