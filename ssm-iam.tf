@@ -57,15 +57,16 @@ resource "aws_iam_role_policy" "ssm_maintenance" {
         Effect = "Allow"
         Action = [
           "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
+          "logs:CreateLogGroup"
         ]
-        Resource = "${aws_cloudwatch_log_group.ssm_maintenance.arn}:*"
+        Resource = "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/ssm/maintenance-windows/${var.project_name}/*"
       }
     ]
   })
 }
 
-# Add S3 permissions to EC2 instance role for SSM logs
+# Add S3 and CloudWatch permissions to EC2 instance role for SSM logs
 resource "aws_iam_role_policy" "ec2_ssm_s3" {
   name = "${var.project_name}-ec2-ssm-s3-policy"
   role = aws_iam_role.ec2_ssm.id
@@ -86,9 +87,10 @@ resource "aws_iam_role_policy" "ec2_ssm_s3" {
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "logs:DescribeLogStreams"
+          "logs:DescribeLogStreams",
+          "logs:CreateLogGroup"
         ]
-        Resource = "${aws_cloudwatch_log_group.ssm_maintenance.arn}:*"
+        Resource = "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/ssm/maintenance-windows/${var.project_name}/*"
       }
     ]
   })

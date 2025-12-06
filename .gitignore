@@ -11,6 +11,7 @@ __pycache__/
 *$py.class
 .venv/
 venv/
+*.egg-info/
 
 # IDE
 .vscode/
@@ -20,3 +21,9 @@ venv/
 
 # OS
 .DS_Store
+
+# Generated files (keep metadata for version control)
+architecture.png
+
+# Logs
+*.log

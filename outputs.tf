@@ -54,6 +54,16 @@ output "instance_patch_group" {
   value       = var.instance_patch_group
 }
 
+output "manual_scan_command" {
+  description = "Command to manually trigger a patch scan"
+  value       = "aws ssm send-command --document-name AWS-RunPatchBaseline --targets Key=tag:PatchGroup,Values=${var.instance_patch_group} --parameters Operation=Scan --region ${var.aws_region}"
+}
+
+output "view_compliance_command" {
+  description = "Command to view patch compliance"
+  value       = "aws ssm describe-instance-patch-states --instance-ids ${aws_instance.hardened.id} --region ${var.aws_region}"
+}
+
 output "ssm_logs_bucket" {
   description = "S3 bucket for SSM logs"
   value       = aws_s3_bucket.ssm_logs.id

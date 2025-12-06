@@ -10,12 +10,6 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
-variable "public_subnets" {
-  description = "Public subnet CIDR blocks"
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
-}
-
 variable "private_subnets" {
   description = "Private subnet CIDR blocks"
   type        = list(string)
@@ -104,6 +98,12 @@ variable "instance_patch_group" {
   description = "Which patch group this instance belongs to"
   type        = string
   default     = "production"
+}
+
+variable "enable_s3_gateway_endpoint" {
+  description = "Enable S3 gateway endpoint for yum updates"
+  type        = bool
+  default     = true
 }
 
 variable "log_retention_days" {

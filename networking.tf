@@ -7,11 +7,10 @@ module "vpc" {
   cidr = var.vpc_cidr
 
   azs             = ["${var.aws_region}a", "${var.aws_region}b"]
-  public_subnets  = var.public_subnets
   private_subnets = var.private_subnets
 
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
+  enable_nat_gateway   = false
+  create_igw           = false
   enable_dns_hostnames = true
   enable_dns_support   = true
 
@@ -52,16 +51,8 @@ resource "aws_security_group" "instance" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTPS for SSM and updates"
-  }
-
-  egress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTP for package updates"
+    cidr_blocks = [var.vpc_cidr]
+    description = "HTTPS to VPC endpoints only"
   }
 
   tags = {
@@ -109,6 +100,21 @@ resource "aws_vpc_endpoint" "ec2messages" {
 
   tags = {
     Name        = "${var.project_name}-ec2messages-endpoint"
+    Environment = var.environment
+  }
+}
+
+# S3 Gateway Endpoint (free) for yum package updates
+resource "aws_vpc_endpoint" "s3" {
+  count = var.enable_s3_gateway_endpoint ? 1 : 0
+
+  vpc_id            = module.vpc.vpc_id
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = module.vpc.private_route_table_ids
+
+  tags = {
+    Name        = "${var.project_name}-s3-endpoint"
     Environment = var.environment
   }
 }

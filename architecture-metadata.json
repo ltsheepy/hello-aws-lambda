@@ -1,0 +1,27 @@
+{
+  "generated_at": "2025-12-06T06:00:19Z",
+  "terraform_workspace": "default",
+  "resources": {
+    "vpc_cidr": "10.0.0.0/16",
+    "subnets": 2,
+    "instances": 1,
+    "vpc_endpoints": 4,
+    "maintenance_windows": 3,
+    "s3_buckets": 1,
+    "has_nat_gateway": false,
+    "has_internet_gateway": false
+  },
+  "instance_details": [
+    {
+      "name": "cis-hardened-instance",
+      "type": "t3.micro",
+      "patch_group": "production"
+    }
+  ],
+  "endpoints": [
+    "ec2messages",
+    "s3",
+    "ssm",
+    "ssmmessages"
+  ]
+}
