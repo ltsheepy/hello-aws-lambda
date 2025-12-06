@@ -6,9 +6,22 @@ Production-ready, secure EC2 infrastructure with automated patching via AWS Syst
 
 ![Architecture Diagram](architecture.png)
 
-*Last updated: 2025-12-06 06:00:19 UTC*
+*Last updated: 2025-12-06 06:02:55 UTC*
 
 ### Infrastructure Overview
+
+| Resource Type | Count | Details |
+|---------------|-------|---------|
+| VPC | 1 | 10.0.0.0/16 |
+| Subnets | 2 | Private only |
+| EC2 Instances | 1 | See details below |
+| VPC Endpoints | 4 | ec2messages, s3, ssm |
+| Maintenance Windows | 3 | Tag-based patching |
+| S3 Buckets | 1 | Encrypted logs |
+| NAT Gateway | No | Cost savings |
+| Internet Gateway | No | Private only |
+
+## Infrastructure Overview
 
 | Resource Type | Count | Details |
 |---------------|-------|---------|
@@ -121,6 +134,59 @@ aws ec2 create-tags --resources i-xxxxx \
 *Estimated monthly costs for Sydney (ap-southeast-2) region*
 
 ### Cost Summary by Category
+
+| Category | Monthly Cost | % of Total |
+|----------|--------------|------------|
+| **Storage** | $0.08 | 0.3% |
+| **Networking** | $21.95 | 98.4% |
+| **Monitoring** | $0.28 | 1.3% |
+| **TOTAL** | **$22.30** | **100%** |
+
+### Detailed Cost Breakdown
+
+| Category | Resource | Details | Hourly | Monthly | Annual |
+|----------|----------|---------|--------|---------|--------|
+| **Storage** | S3 Bucket 1: Storage | ~1.0GB logs | $0.0000 | $0.03 | $0.30 |
+|  | S3 Bucket 1: Requests | ~10k PUT/GET | $0.0001 | $0.05 | $0.60 |
+| **Networking** | VPC Endpoint: EC2MESSAGES | Interface endpoint (730 hrs) | $0.0100 | $7.30 | $87.60 |
+|  | VPC Endpoint: SSM | Interface endpoint (730 hrs) | $0.0100 | $7.30 | $87.60 |
+|  | VPC Endpoint: SSMMESSAGES | Interface endpoint (730 hrs) | $0.0100 | $7.30 | $87.60 |
+|  | VPC Endpoint Data: EC2MESSAGES | ~1.7GB/month | $0.0000 | $0.02 | $0.20 |
+|  | VPC Endpoint Data: SSM | ~1.7GB/month | $0.0000 | $0.02 | $0.20 |
+|  | VPC Endpoint Data: SSMMESSAGES | ~1.7GB/month | $0.0000 | $0.02 | $0.20 |
+| **Monitoring** | CloudWatch Logs 1: Ingestion | ~167MB | $0.0001 | $0.08 | $1.00 |
+|  | CloudWatch Logs 1: Storage | ~333MB | $0.0000 | $0.01 | $0.12 |
+|  | CloudWatch Logs 2: Ingestion | ~167MB | $0.0001 | $0.08 | $1.00 |
+|  | CloudWatch Logs 2: Storage | ~333MB | $0.0000 | $0.01 | $0.12 |
+|  | CloudWatch Logs 3: Ingestion | ~167MB | $0.0001 | $0.08 | $1.00 |
+|  | CloudWatch Logs 3: Storage | ~333MB | $0.0000 | $0.01 | $0.12 |
+| | **TOTAL** | | | **$22.30** | **$267.66** |
+
+**Annual Cost: $267.66**
+
+### Free AWS Services Included
+
+The following services are included at **no additional cost**:
+
+| Service | Usage | Value |
+|---------|-------|-------|
+| SSM Session Manager | Unlimited sessions | Replaces bastion host (~$10/month) |
+| SSM Patch Manager | Automated patching | Replaces manual patching time |
+| SSM Inventory | Resource tracking | Replaces third-party tools |
+| SSM Maintenance Windows | Scheduled tasks | Built-in automation |
+| S3 Gateway Endpoint | Package downloads | Replaces NAT data charges |
+
+### Cost Optimization
+
+Current configuration saves **~$48/month** by:
+- ❌ No NAT Gateway (-$48.18/month)
+- ✅ VPC Endpoints for AWS services
+- ✅ S3 Gateway Endpoint (free) for package repos
+- ✅ Private subnets only (no public IPs)
+
+See [COST-ESTIMATE.md](COST-ESTIMATE.md) for detailed optimization options.
+
+## Cost Summary by Category
 
 | Category | Monthly Cost | % of Total |
 |----------|--------------|------------|
