@@ -24,5 +24,7 @@ resource "aws_instance" "hardened" {
     Environment = var.environment
     CIS         = "hardened"
     PatchGroup  = var.instance_patch_group
+    ManagedBy   = "Terraform"
+    Owner       = "DevOps"
   }
 }
