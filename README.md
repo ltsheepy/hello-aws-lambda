@@ -6,7 +6,7 @@ Production-ready, secure EC2 infrastructure with automated patching via AWS Syst
 
 ![Architecture Diagram](architecture.png)
 
-*Last updated: 2025-12-06 06:05:53 UTC*
+*Last updated: 2025-12-06 06:23:53 UTC*
 
 ### Infrastructure Overview
 
