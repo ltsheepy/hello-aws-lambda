@@ -21,14 +21,14 @@ resource "aws_ssm_association" "inventory" {
   schedule_expression = "rate(30 minutes)"
 
   parameters = {
-    applications           = "Enabled"
-    awsComponents          = "Enabled"
-    customInventory        = "Enabled"
+    applications                = "Enabled"
+    awsComponents               = "Enabled"
+    customInventory             = "Enabled"
     instanceDetailedInformation = "Enabled"
-    networkConfig          = "Enabled"
-    services               = "Enabled"
-    windowsUpdates         = "Enabled"
-    windowsRoles           = "Enabled"
+    networkConfig               = "Enabled"
+    services                    = "Enabled"
+    windowsUpdates              = "Enabled"
+    windowsRoles                = "Enabled"
   }
 
   compliance_severity = "MEDIUM"
