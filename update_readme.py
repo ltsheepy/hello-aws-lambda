@@ -331,19 +331,29 @@ Current configuration saves **~$48/month** by:
 See [COST-ESTIMATE.md](COST-ESTIMATE.md) for detailed optimization options.
 """
     
-    # Replace sections
-    # Architecture section
+    # Replace sections more carefully
+    # Architecture section - find and replace everything until next ## heading
     arch_start = content.find('## Architecture')
-    arch_end = content.find('## ', arch_start + 1)
-    if arch_start != -1 and arch_end != -1:
-        content = content[:arch_start] + architecture_section + '\n' + content[arch_end:]
+    if arch_start != -1:
+        # Find the next ## heading after Architecture
+        next_section = content.find('\n## ', arch_start + 1)
+        if next_section != -1:
+            content = content[:arch_start] + architecture_section + '\n' + content[next_section+1:]
+        else:
+            # No next section, replace to end
+            content = content[:arch_start] + architecture_section
     
-    # Cost section
+    # Cost section - find and replace everything until next ## heading
     cost_start = content.find('## Cost Breakdown')
-    cost_end = content.find('## ', cost_start + 1)
-    if cost_start != -1 and cost_end != -1:
-        content = content[:cost_start] + cost_section + '\n' + content[cost_end:]
-    elif cost_start == -1:
+    if cost_start != -1:
+        # Find the next ## heading after Cost Breakdown
+        next_section = content.find('\n## ', cost_start + 1)
+        if next_section != -1:
+            content = content[:cost_start] + cost_section + '\n' + content[next_section+1:]
+        else:
+            # No next section, append
+            content = content[:cost_start] + cost_section
+    else:
         # Add cost section before "Customization" if it doesn't exist
         custom_start = content.find('## Customization')
         if custom_start != -1:
