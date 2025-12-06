@@ -45,3 +45,69 @@ variable "project_name" {
   type        = string
   default     = "cis-hardened"
 }
+
+# SSM Maintenance Window configurations
+variable "maintenance_windows" {
+  description = "Map of maintenance windows with their configurations"
+  type = map(object({
+    schedule          = string
+    duration          = number
+    cutoff            = number
+    timezone          = string
+    patch_group       = string
+    approval_days     = number
+    reboot_option     = string
+    max_concurrency   = string
+    max_errors        = string
+  }))
+  
+  default = {
+    production = {
+      schedule        = "cron(0 2 ? * SUN *)"  # Sunday 2 AM
+      duration        = 3
+      cutoff          = 1
+      timezone        = "Australia/Sydney"
+      patch_group     = "production"
+      approval_days   = 7
+      reboot_option   = "RebootIfNeeded"
+      max_concurrency = "1"
+      max_errors      = "1"
+    }
+    
+    development = {
+      schedule        = "cron(0 3 ? * SAT *)"  # Saturday 3 AM
+      duration        = 2
+      cutoff          = 1
+      timezone        = "Australia/Sydney"
+      patch_group     = "development"
+      approval_days   = 3
+      reboot_option   = "RebootIfNeeded"
+      max_concurrency = "2"
+      max_errors      = "1"
+    }
+    
+    critical = {
+      schedule        = "cron(0 1 ? * TUE *)"  # Tuesday 1 AM
+      duration        = 4
+      cutoff          = 1
+      timezone        = "Australia/Sydney"
+      patch_group     = "critical"
+      approval_days   = 14
+      reboot_option   = "NoReboot"
+      max_concurrency = "1"
+      max_errors      = "0"
+    }
+  }
+}
+
+variable "instance_patch_group" {
+  description = "Which patch group this instance belongs to"
+  type        = string
+  default     = "production"
+}
+
+variable "log_retention_days" {
+  description = "Days to retain logs"
+  type        = number
+  default     = 30
+}

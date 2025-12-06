@@ -23,5 +23,6 @@ resource "aws_instance" "hardened" {
     Name        = "${var.project_name}-instance"
     Environment = var.environment
     CIS         = "hardened"
+    PatchGroup  = var.instance_patch_group
   }
 }

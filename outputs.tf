@@ -27,3 +27,34 @@ output "private_subnets" {
   description = "Private subnet IDs"
   value       = module.vpc.private_subnets
 }
+
+output "maintenance_windows" {
+  description = "Map of maintenance window IDs"
+  value = {
+    for k, v in aws_ssm_maintenance_window.windows : k => {
+      id       = v.id
+      schedule = v.schedule
+      timezone = v.schedule_timezone
+    }
+  }
+}
+
+output "patch_baselines" {
+  description = "Map of patch baseline IDs"
+  value = {
+    for k, v in aws_ssm_patch_baseline.baselines : k => {
+      id            = v.id
+      approval_days = v.approval_rule[0].approve_after_days
+    }
+  }
+}
+
+output "instance_patch_group" {
+  description = "Patch group assigned to the instance"
+  value       = var.instance_patch_group
+}
+
+output "ssm_logs_bucket" {
+  description = "S3 bucket for SSM logs"
+  value       = aws_s3_bucket.ssm_logs.id
+}
