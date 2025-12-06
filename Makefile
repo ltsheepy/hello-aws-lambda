@@ -44,11 +44,43 @@ readme: diagram security-report ## Generate all reports and update README
 	@echo "   git push"
 
 validate: ## Validate Terraform configuration
+	@echo "🔍 Validating Terraform..."
 	terraform validate
 	terraform fmt -check
+	@echo "✅ Validation passed"
 
 format: ## Format Terraform files
+	@echo "✨ Formatting Terraform files..."
 	terraform fmt -recursive
+	@echo "✅ Formatted"
+
+lint: ## Run TFLint
+	@echo "🔍 Running TFLint..."
+	@command -v tflint >/dev/null 2>&1 || { echo "Installing tflint..."; brew install tflint; }
+	tflint --init
+	tflint --recursive
+	@echo "✅ Linting passed"
+
+security: ## Run security scans (tfsec)
+	@echo "🔒 Running security scans..."
+	@command -v tfsec >/dev/null 2>&1 || { echo "Installing tfsec..."; brew install tfsec; }
+	tfsec . --minimum-severity MEDIUM
+	@echo "✅ Security scan passed"
+
+security-full: ## Run comprehensive security scans
+	@echo "🔒 Running comprehensive security scans..."
+	@command -v tfsec >/dev/null 2>&1 || { echo "Installing tfsec..."; brew install tfsec; }
+	@command -v checkov >/dev/null 2>&1 || { echo "Installing checkov..."; pip3 install checkov; }
+	@echo ""
+	@echo "Running tfsec..."
+	tfsec . --format default
+	@echo ""
+	@echo "Running checkov..."
+	checkov -d . --framework terraform --quiet
+	@echo ""
+	@echo "✅ All security scans completed"
+
+check: validate lint security ## Run all checks (validate, lint, security)
 
 clean: ## Clean generated files
 	rm -f architecture.png

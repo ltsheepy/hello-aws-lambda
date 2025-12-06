@@ -1,0 +1,18 @@
+# Code Owners
+# These owners will be requested for review when someone opens a pull request
+
+# Terraform files
+*.tf @YOUR_USERNAME
+*.tfvars @YOUR_USERNAME
+
+# Security and compliance
+SECURITY.md @YOUR_USERNAME
+.tfsec.yml @YOUR_USERNAME
+.tflint.hcl @YOUR_USERNAME
+
+# CI/CD
+.github/ @YOUR_USERNAME
+
+# Documentation
+README.md @YOUR_USERNAME
+*.md @YOUR_USERNAME

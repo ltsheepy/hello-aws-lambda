@@ -1,0 +1,82 @@
+name: Update Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.tf'
+      - 'architecture-metadata.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+          pip install diagrams graphviz boto3 pyyaml
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+      
+      - name: Terraform Init
+        run: terraform init -backend=false
+      
+      - name: Generate Documentation
+        run: |
+          python3 generate_diagram_dynamic.py || echo "Diagram generation skipped (no state)"
+          python3 update_readme.py || echo "README update skipped"
+          python3 generate_security_report.py || echo "Security report skipped"
+      
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit documentation
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md SECURITY.md architecture.png architecture-metadata.json || true
+          git commit -m "docs: Update documentation [skip ci]" || exit 0
+          git push
+      
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && steps.git-check.outputs.changes == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '📚 Documentation has been updated automatically. Please review the changes.'
+            })

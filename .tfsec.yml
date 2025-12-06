@@ -1,0 +1,34 @@
+# TFSec Configuration
+# https://aquasecurity.github.io/tfsec/
+
+# Minimum severity level
+minimum_severity: MEDIUM
+
+# Exclude specific checks (with justification)
+exclude:
+  # Example: Exclude if you have a valid reason
+  # - aws-ec2-enable-at-rest-encryption  # Using encrypted AMI instead
+
+# Include specific checks
+# include:
+#   - aws-*
+
+# Exclude specific directories
+exclude_paths:
+  - .terraform/
+  - .git/
+
+# Custom checks directory
+# custom_check_dir: .tfsec/custom
+
+# Output format options: default, json, csv, checkstyle, junit, sarif
+# format: default
+
+# Ignore specific resources
+# ignore:
+#   aws_instance.example:
+#     - aws-ec2-enable-at-rest-encryption
+
+# Severity overrides
+# severity_overrides:
+#   aws-ec2-enable-at-rest-encryption: LOW
