@@ -2,6 +2,7 @@
 .terraform/
 *.tfstate
 *.tfstate.*
+*.tfstate.backup
 .terraform.lock.hcl
 *.zip
 
@@ -22,8 +23,9 @@ venv/
 # OS
 .DS_Store
 
-# Generated files (keep metadata for version control)
-architecture.png
+# Generated files (both are version controlled for documentation)
+# architecture.png - committed to show in README
+# architecture-metadata.json - committed for tracking
 
 # Logs
 *.log
